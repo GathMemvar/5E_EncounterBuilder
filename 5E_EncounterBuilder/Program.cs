@@ -214,7 +214,84 @@ namespace _5E_EncounterBuilder
             "Anniversary of an important event",
             "Arena event",
             "Arrival of a caravan or ship",
-            "Arrival of a circus"
+            "Arrival of a circus",
+            "Arrival of an important NPC",
+            "Arrival of marching modrons",
+            "Artistic performance",
+            "Athletic event",
+            "Birth of a child",
+            "Birthday of an important NPC",
+            "Civic festival",
+            "Comet appearance",
+            "Commemoration of a past tragedy",
+            "Consecration of a new temple",
+            "Consecration",
+            "Council meeting",
+            "Equinox or solstice",
+            "Execution",
+            "Fertility festival",
+            "Full moon",
+            "Funeral",
+            "Graduation of cadets or wizards",
+            "Harvest festival",
+            "Holy day",
+            "Investiture of a knight or other noble",
+            "Lunar eclipse",
+            "Midsummer festival",
+            "Midwinter festival",
+            "Migration of monsters",
+            "Monarch's ball",
+            "New moon",
+            "New year",
+            "Pardoning of a prisoner",
+            "Planar conjunction",
+            "Planetary alignment",
+            "Priestly investiture",
+            "Procession of ghosts",
+            "Remembrance for soldiers lost in war",
+            "Royal address or proclamation",
+            "Royal audience day",
+            "Signing of a treaty",
+            "Solar eclipse",
+            "Tournament",
+            "Trial",
+            "Violent uprising",
+            "Wedding or wedding anniversary"
+        };
+
+        private static string[] _moralQuandries = new string[]
+        {
+            "Ally quandary",
+            "Friend quandary",
+            "Honor quandary",
+            "Rescue quandary",
+            "Respect quandary"
+        };
+
+        private static string[] _twists = new string[]
+        {
+            "The adventurers are racing against other creatures with the same or opposite goal",
+            "The adventurers become responsible for the safety of a noncombatant NPC",
+            "The adventurers are prohibited from killing the villain, but the villain has no compunctions about killing them",
+            "The adventurers have a time limit",
+            "The adventurers have received flase or extraneous information",
+            "Completing an adventure goal fulfills a prophecy or prevents the fulfillment of a prophecy",
+            "The adventurers have two different goals, but they can complete only one",
+            "Completing the goal secretly helps the villain",
+            "The adventurers must cooperate with a known enemy to achieve the goal",
+            "The adventurers are under magical compulsion to complete their goal"
+        };
+
+        private static string[] _sideQuests = new string[]
+        {
+            "Find a specific item rumored to be in the area",
+            "Retrieve a stolen item in the villain's possession",
+            "Recieve information from an NPC in the area",
+            "Rescue a captive",
+            "Discover the fate of a missing NPC",
+            "Slay a specific monster",
+            "Discover the nature and origin of a strange phenomenon in the area",
+            "Secure the aid of a character or creature in the room"
         };
 
         public static void Main(string[] args)
