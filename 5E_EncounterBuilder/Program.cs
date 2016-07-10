@@ -10,6 +10,7 @@ namespace _5E_EncounterBuilder
     {
         static void Main(string[] args)
         {
+
         }
     }
 }
