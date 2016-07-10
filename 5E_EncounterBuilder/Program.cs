@@ -1,21 +1,27 @@
-﻿using System;
+﻿//Brandon DeLano
+//7/10/2016
+//Quick and dirty Dnd 5E Adventure generator.  
+//Designed to reduce the amount of time it takes me to randomly generate adventures according to the DMG.
+//Not intended for sale or profit, just fun.
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace _5E_EncounterBuilder
 {
     public class Program
     {
-        private const int d2 = 2;
-        private const int d4 = 4;
-        private const int d6 = 6;
-        private const int d8 = 8;
-        private const int d10 = 10;
-        private const int d12 = 12;
-        private const int d20 = 20;
-        private static string output = "";
+        
+        //private static string output = "";
+        private enum Difficulty
+        {
+            Easy,
+            Medium,
+            Hard,
+            Deadly
+        }
+
+        #region Look-up Tables
         private static string[] _dungeonGoals = new string[] 
         {
             "Stop the dungeon's monstrous inhabitants from raiding the surface world",
@@ -293,18 +299,27 @@ namespace _5E_EncounterBuilder
             "Discover the nature and origin of a strange phenomenon in the area",
             "Secure the aid of a character or creature in the room"
         };
+        #endregion
 
         public static void Main(string[] args)
         {
+            string output = "";
             //roll 1d2
-            int result = Roll(1, d2);
-            if(result % 2 == 0)
+            int result = Roll(1, 3);
+            Console.WriteLine(result);
+            if(result == 0)
             {
                 output += "Location: ";
-                Location();
+                output += DetermineLocationValues();
             }
-            output += "Event: ";
-            Event();
+            else
+            {
+                output += "Event: ";
+                Event();
+            }
+
+            System.Console.WriteLine(output);
+            
 
         }
 
@@ -317,47 +332,191 @@ namespace _5E_EncounterBuilder
         public static int Roll(int numDice, int numSides)
         {
             Random dieRoll = new Random();
-            //Roll between 1 and the number of sides on the dice
-            int result = dieRoll.Next(1, numSides); 
+            
+            int result = dieRoll.Next(numSides); 
             return result;
         }
         
-        public static void Location()
+        #region Locations
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string DetermineLocationValues()
         {
-            int result = Roll(1, d2);
-            
-        }
+            string output = "";
+            //roll 1d2
+            int result = Roll(1, 2);
+            output += SetLocationGoals(result);
+            output += "Villains: ";
+            output += DetermineVillains();
+            output += "Allies: ";
+            output += DetermineAllies();
+            output += "Adventure Patrons: ";
+            output += DeterminePatrons();
+            output += "\nAdventure Introduction: \n\n";
+            output += GetAdventureIntroduction();
+            output += "\nAdventure Climax: \n";
+            output += GetAdventureClimax();
 
-        public static void LocationGoals(int locationType)
+            Console.WriteLine("Enter Max Encounters (6 is default, 15 is maximum).  Press Enter to take the default\n");
+            string sMaxEncounters = Console.ReadLine().Trim();
+            Console.WriteLine("Enter Max difficulty (1 = Easy, 2 = Medium, 3 = Hard, 4 = Deadly.  Deadly is default).  Press Enter to take the default\n");
+            string sMaxDifficulty = Console.ReadLine().Trim();
+
+            int iMaxEncounters = 6;
+            int iMaxDifficulty = 4;
+
+            //This is stupid and ugly and I don't like it. 
+            //TODO: Make this less stupid and ugly
+            if (sMaxEncounters == "")
+            {
+                //do nothing, as this is the default
+            }
+            else if (Convert.ToInt32(sMaxEncounters) > 15)
+            {
+                iMaxEncounters = 15;
+            }
+            
+            //This is stupid and ugly and I don't like it. 
+            //TODO: Make this less stupid and ugly
+            if(sMaxDifficulty == "")
+            {
+                //do nothing, as this is the default
+            }
+            else if(Convert.ToInt32(sMaxDifficulty) > 4)
+            {
+                iMaxDifficulty = 4;
+            }
+
+            output += GetEncounterInformation(iMaxEncounters, iMaxDifficulty);
+            return output;
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locationType"></param>
+        public static string SetLocationGoals(int locationType)
         {
+            string output = "";
             //Dungeon
-            if(locationType == 1)
+            if(locationType == 0)
             {
                 output += "Dungeon\nGoal: ";
-                output += DungeonGoals();
+                output += SetDungeonGoals();
+                output += "\n\n";
+
+            }
+            else
+            {
+                output += "Wilderness\nGoal: ";
+                output += SetWildernessGoals();
                 output += "\n\n";
             }
 
-        }
+            return output;
 
-        public static string DungeonGoals()
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string SetDungeonGoals()
         {
-            int result = Roll(1, d20);
+            int result = Roll(1, _dungeonGoals.Length - 1);
 
             return _dungeonGoals[result];
         }
-
-        public static string WildernessGoals()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string SetWildernessGoals()
         {
-            //TODO: Remember that a 20 roll will force a d12 roll for Other Goals
+            int result = Roll(1, _wildernessGoals.Length - 1);
+            if(result == 19)
+            {
+                result = Roll(1, _otherWildernessGoals.Length - 1);
+                return _otherWildernessGoals[result];
+            }
+            return _wildernessGoals[result];
+        }
+
+        public static string DetermineVillains()
+        {
+            int result = Roll(1, _adventureVillians.Length - 1);
+            return _adventureVillians[result] + "\n";
+        }
+
+        public static string DetermineAllies()
+        {
+            int result = Roll(1, _adventureAllies.Length - 1);
+            return _adventureAllies[result] + "\n";
+        }
+
+        public static string DeterminePatrons()
+        {
+            int result = Roll(1, _adventurePatrons.Length);
+            return _adventurePatrons[result] + "\n";
+        }
+
+        public static string GetAdventureIntroduction()
+        {
+            int result = Roll(1, _adventureIntroduction.Length - 1);
+            return _adventureIntroduction[result] + "\n";
+        }
+
+        public static string GetAdventureClimax()
+        {
+            int result = Roll(1, _adventureClimax.Length);
+            return _adventureClimax[result];
+        }
+
+        public static string GetEncounterInformation(int maxEncounters, int maxDifficulty)
+        {
+            int numEncounters = Roll(1, maxEncounters);
+            List<int> encounterList = new List<int>();
+
+            for (int i = 0; i < numEncounters; i++)
+            {
+                encounterList.Add(Roll(1, maxDifficulty));
+            }
+
+            string encounters = "\nNumber of encounters: " + numEncounters.ToString();
+            encounters += "\nEncounter difficulty:";
+
+            foreach(int e in encounterList)
+            {
+                switch(e)
+                {
+                    case 1:
+                        encounters += "\n\tEasy";
+                        break;
+                    case 2:
+                        encounters += "\n\tMedium";
+                        break;
+                    case 3:
+                        encounters += "\n\tHard";
+                        break;
+                    case 4:
+                        encounters += "\n\tDeadly";
+                        break;
+                }
+            }
+            encounters += "\n";
+            return encounters;
+        }
+        #endregion
+
+        #region Event
+        public static string Event()
+        {
+
             return "";
         }
-        
 
-        public static void Event()
-        {
+        #endregion
 
-        }
     }
 }
 
