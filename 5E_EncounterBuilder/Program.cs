@@ -306,6 +306,7 @@ namespace _5E_EncounterBuilder
             string output = "";
             //roll 1d2
             int result = Roll(1, 3);
+            result = 0;
             Console.WriteLine(result);
             if(result == 0)
             {
@@ -331,9 +332,21 @@ namespace _5E_EncounterBuilder
         /// <returns></returns>
         public static int Roll(int numDice, int numSides)
         {
+            List<int> rollList = new List<int>();
             Random dieRoll = new Random();
-            
-            int result = dieRoll.Next(numSides); 
+
+            for (int i = 0; i < numDice; i++)
+            {
+                rollList.Add(dieRoll.Next(numSides));
+            }
+
+            int result = 0;
+
+            for (int i = 0; i < rollList.Count; i++)
+            {
+                result += rollList[i];
+            }
+           
             return result;
         }
         
@@ -358,13 +371,16 @@ namespace _5E_EncounterBuilder
             output += "\nAdventure Climax: \n";
             output += GetAdventureClimax();
 
-            Console.WriteLine("Enter Max Encounters (6 is default, 15 is maximum).  Press Enter to take the default\n");
+            int defaultDifficulty = 4;
+            int defaultEncounters = 6;
+            int defaultMaxEncounters = 15;
+            Console.WriteLine("Enter Max Encounters (" + defaultEncounters + " is default, " + defaultMaxEncounters + " is maximum).  Press Enter to take the default\n");
             string sMaxEncounters = Console.ReadLine().Trim();
-            Console.WriteLine("Enter Max difficulty (1 = Easy, 2 = Medium, 3 = Hard, 4 = Deadly.  Deadly is default).  Press Enter to take the default\n");
+            Console.WriteLine("Enter Max difficulty (1 = Easy, 2 = Medium, 3 = Hard, 4 = Deadly.  " + defaultDifficulty + " is default).  Press Enter to take the default\n");
             string sMaxDifficulty = Console.ReadLine().Trim();
 
-            int iMaxEncounters = 6;
-            int iMaxDifficulty = 4;
+            int iMaxEncounters = 1;
+            int iMaxDifficulty = 1;
 
             //This is stupid and ugly and I don't like it. 
             //TODO: Make this less stupid and ugly
@@ -376,22 +392,86 @@ namespace _5E_EncounterBuilder
             {
                 iMaxEncounters = 15;
             }
-            
+            else if (Convert.ToInt32(sMaxEncounters) < 1)
+            {
+                iMaxEncounters = 1;
+            }
+            else
+            {
+                iMaxEncounters = Convert.ToInt32(sMaxEncounters);
+            }
+
             //This is stupid and ugly and I don't like it. 
             //TODO: Make this less stupid and ugly
-            if(sMaxDifficulty == "")
+            if (sMaxDifficulty == "")
             {
-                //do nothing, as this is the default
+                iMaxEncounters = defaultEncounters;
             }
             else if(Convert.ToInt32(sMaxDifficulty) > 4)
             {
                 iMaxDifficulty = 4;
             }
+            else if (Convert.ToInt32(sMaxDifficulty) < 1)
+            {
+                iMaxDifficulty = 1;
+            }
+            else
+            {
+                iMaxDifficulty = Convert.ToInt32(sMaxDifficulty);
+            }
 
             output += GetEncounterInformation(iMaxEncounters, iMaxDifficulty);
             return output;
 
+
+            /*
+            //
+            // Encounters
+            //
+            Console.WriteLine("Enter Max Encounters (6 is default, 15 is maximum).  Press Enter to take the default\n");
+            string sMaxEncounters = Console.ReadLine().Trim();
+
+            int minEncounters = 1, maxEncounters = 15;                                    // Min/Max valid range
+            int dEncounters = 6;                                                          // defaults
+            int iEncounters = 0;                                                          // user selection
+
+            if (!Int32.TryParse(sMaxEncounters, out iEncounters))                         // parse user input selections
+              iEncounters = dEncounters;
+
+            iEncounters = Math.Max(minEncounters, Math.Min(maxEncounters, iEncounters));  // clamp user input to min/max valid values
+
+
+            //
+            // Difficulty
+            //
+            Console.WriteLine("Enter Max difficulty (1 = Easy, 2 = Medium, 3 = Hard, 4 = Deadly.  Deadly is default).  Press Enter to take the default\n");
+            string sMaxDifficulty = Console.ReadLine().Trim();
+
+            int minDifficulty = 1, maxDifficulty =  4;                                    // Min/Max valid range
+            int dDifficulty = 4;                                                          // defaults
+            int iDifficulty = 0;                                                          // user selection
+
+            if (!Int32.TryParse(sMaxDifficulty, out iDifficulty))                         // parse user input selections
+              iDifficulty = dDifficulty;
+
+            iDifficulty = Math.Max(minDifficulty, Math.Min(maxDifficulty, iDifficulty));  // clamp user input to min/max valid values
+
+
+            output.AppendLine(GetEncounterInformation(iEncounters, iDifficulty));
+            return output.ToString();
+
+
+
+
+
+
+
+
+
+
+    */
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -417,6 +497,7 @@ namespace _5E_EncounterBuilder
             return output;
 
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -427,6 +508,7 @@ namespace _5E_EncounterBuilder
 
             return _dungeonGoals[result];
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -442,44 +524,76 @@ namespace _5E_EncounterBuilder
             return _wildernessGoals[result];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string DetermineVillains()
         {
             int result = Roll(1, _adventureVillians.Length - 1);
             return _adventureVillians[result] + "\n";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string DetermineAllies()
         {
             int result = Roll(1, _adventureAllies.Length - 1);
             return _adventureAllies[result] + "\n";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string DeterminePatrons()
         {
             int result = Roll(1, _adventurePatrons.Length);
             return _adventurePatrons[result] + "\n";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string GetAdventureIntroduction()
         {
             int result = Roll(1, _adventureIntroduction.Length - 1);
             return _adventureIntroduction[result] + "\n";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string GetAdventureClimax()
         {
             int result = Roll(1, _adventureClimax.Length);
             return _adventureClimax[result];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxEncounters"></param>
+        /// <param name="maxDifficulty"></param>
+        /// <returns></returns>
         public static string GetEncounterInformation(int maxEncounters, int maxDifficulty)
         {
-            int numEncounters = Roll(1, maxEncounters);
+            Random rand = new Random();
+            int numEncounters = rand.Next(1, maxEncounters);
             List<int> encounterList = new List<int>();
 
+            if (numEncounters == 0)
+            {
+                numEncounters = 1;
+            }
+            
             for (int i = 0; i < numEncounters; i++)
             {
-                encounterList.Add(Roll(1, maxDifficulty));
+                encounterList.Add(rand.Next(1, maxDifficulty));
             }
 
             string encounters = "\nNumber of encounters: " + numEncounters.ToString();
@@ -511,10 +625,59 @@ namespace _5E_EncounterBuilder
         #region Event
         public static string Event()
         {
+            string output = "";
+            //roll 1d2
+            int result = Roll(1, 2);
+            output += SetVillainActions();
+            output += "\nGoals:\n";
+            output += SetEventGoals();
+            output += "\nEvent Framing\n";
+            output += EventFraming();
+            //output += SetLocationGoals(result);
+            //output += "Villains: ";
+            //output += DetermineVillains();
+            //output += "Allies: ";
+            //output += DetermineAllies();
+            //output += "Adventure Patrons: ";
+            //output += DeterminePatrons();
+            //output += "\nAdventure Introduction: \n\n";
+            //output += GetAdventureIntroduction();
+            //output += "\nAdventure Climax: \n";
+            //output += GetAdventureClimax();
 
             return "";
         }
 
+        public static string EventFraming()
+        {
+            Random rand = new Random();
+            int result = Roll(1, _eventFraming.Length);
+            if(result == 50)
+            {
+                rand.Next(0, _eventFraming.Length - 1);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string SetEventGoals()
+        {
+            int result = Roll(1, _eventGoals.Length);
+            return _eventGoals[result];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string SetVillainActions()
+        {
+            int result = Roll(1, _eventVillainActions.Length);
+
+            return _eventVillainActions[result];
+        }
         #endregion
 
     }
